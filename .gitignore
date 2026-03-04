@@ -1,0 +1,6 @@
+# taskboard state
+.taskboard/
+*/.taskboard/
+
+# debug sample data
+sample-project/.taskboard/

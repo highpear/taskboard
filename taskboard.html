@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Taskboard (Local)</title>
+  <link rel="stylesheet" href="./taskboard.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="title">Taskboard</div>
+      <div class="subtitle">Local Kanban • .taskboard/ (NDJSON)</div>
+    </div>
+
+    <div class="actions">
+      <button id="btnOpen" class="btn">Open Project Folder</button>
+      <button id="btnInit" class="btn btnPrimary">Initialize .taskboard</button>
+      <button id="btnAdd" class="btn" disabled>Add Task</button>
+      <button id="btnReload" class="btn" disabled>Reload</button>
+      <span id="status" class="status">Not connected</span>
+    </div>
+  </header>
+
+  <main class="main">
+    <section id="board" class="board" aria-label="Kanban Board"></section>
+  </main>
+
+  <template id="tplColumn">
+    <div class="column" data-column-id="">
+      <div class="columnHeader">
+        <div class="columnTitle"></div>
+        <div class="columnMeta"></div>
+      </div>
+      <div class="dropzone" data-dropzone=""></div>
+    </div>
+  </template>
+
+  <template id="tplCard">
+    <article class="card" draggable="true" data-task-id="">
+      <div class="cardTop">
+        <div class="cardTitle"></div>
+        <div class="pill"></div>
+      </div>
+
+      <div class="checklist"></div>
+
+      <div class="cardFooter">
+        <button class="miniBtn" data-action="add-check">+ Check</button>
+        <button class="miniBtn" data-action="rename">Rename</button>
+        <button class="miniBtn danger" data-action="delete">Delete</button>
+      </div>
+    </article>
+  </template>
+
+  <script type="module" src="./taskboard.js"></script>
+</body>
+</html>
