@@ -10,6 +10,7 @@ const UI = {
   btnInit: document.getElementById("btnInit"),
   btnAdd: document.getElementById("btnAdd"),
   btnReload: document.getElementById("btnReload"),
+  btnTheme: document.getElementById("btnTheme"),
   status: document.getElementById("status"),
   board: document.getElementById("board"),
   tplColumn: document.getElementById("tplColumn"),
@@ -619,6 +620,27 @@ UI.btnReload.addEventListener("click", async () => {
   }
 });
 
+// ----------------------- Theme Toggle -----------------------
+
+function initTheme() {
+  const saved = localStorage.getItem("taskboard-theme");
+  const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const theme = saved || (systemDark ? "dark" : "light");
+  setTheme(theme);
+}
+
+function setTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  localStorage.setItem("taskboard-theme", theme);
+  UI.btnTheme.textContent = theme === "dark" ? "Theme: Dark" : "Theme: Light";
+}
+
+UI.btnTheme.addEventListener("click", () => {
+  const current = document.documentElement.getAttribute("data-theme");
+  setTheme(current === "dark" ? "light" : "dark");
+});
+
 // Initial screen
+initTheme();
 renderEmptyBoard();
 setStatus("Open project folder to begin");
