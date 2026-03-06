@@ -9,6 +9,9 @@
   --accent: #3b82f6;
   --accent2: #dbeafe;
   --danger: #ef4444;
+  --p1: #ef4444;
+  --p2: #f59e0b;
+  --p3: #3b82f6;
   --header-bg: rgba(255, 255, 255, 0.85);
   --card-bg: linear-gradient(180deg, #ffffff, #f8fafc);
   --btn-bg: linear-gradient(180deg, #ffffff, #f1f5f9);
@@ -26,6 +29,9 @@
   --accent: #7aa2ff;
   --accent2: #2a3a5f;
   --danger: #ff6b6b;
+  --p1: #ff6b6b;
+  --p2: #fbbf24;
+  --p3: #60a5fa;
   --header-bg: rgba(10, 14, 22, 0.75);
   --card-bg: linear-gradient(180deg, rgba(16,22,36,0.9), rgba(13,18,30,0.9));
   --btn-bg: linear-gradient(180deg, #141c2d, #101728);
@@ -164,6 +170,18 @@ body {
   border-radius: 999px;
   white-space: nowrap;
 }
+
+.priorityBadge {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: white;
+  text-transform: uppercase;
+}
+.priorityBadge.p1 { background-color: var(--p1); }
+.priorityBadge.p2 { background-color: var(--p2); }
+.priorityBadge.p3 { background-color: var(--p3); }
 
 .checklist { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
 .checkItem {

@@ -339,6 +339,11 @@ function renderCard(task) {
   node.dataset.taskId = task.id;
   node.querySelector(".cardTitle").textContent = task.title;
 
+  const prio = node.querySelector(".priorityBadge");
+  const prioVal = task.priority || "P2";
+  prio.textContent = prioVal;
+  prio.className = `priorityBadge ${prioVal.toLowerCase()}`;
+
   const { done, total } = checklistProgress(task);
   node.querySelector(".pill").textContent = total ? `${done}/${total}` : "no checks";
 
@@ -351,6 +356,7 @@ function renderCard(task) {
     if (!btn) return;
     const action = btn.dataset.action;
     if (action === "add-check") await onAddCheck(task.id);
+    if (action === "priority") await onTogglePriority(task.id);
     if (action === "rename") await onRenameTask(task.id);
     if (action === "delete") await onDeleteTask(task.id);
   });
@@ -527,6 +533,23 @@ async function onRenameTask(taskId) {
   await saveSnapshot("snapshot_after_rename");
   renderBoard();
   setStatus("Renamed");
+}
+
+async function onTogglePriority(taskId) {
+  const t = getTask(taskId);
+  if (!t) return;
+
+  const current = t.priority || "P2";
+  const cycle = { P1: "P2", P2: "P3", P3: "P1" };
+  const next = cycle[current] || "P2";
+
+  t.priority = next;
+  t.updated_at = nowIsoLocal();
+
+  await appendEvent({ type: "priority_changed", task_id: t.id, from: current, to: next });
+  await saveSnapshot("snapshot_after_priority");
+  renderBoard();
+  setStatus(`Priority: ${next}`);
 }
 
 async function onDeleteTask(taskId) {
