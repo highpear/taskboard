@@ -222,6 +222,62 @@ body {
   border-radius: 14px;
 }
 
+/* Modal / Dialog */
+.modal {
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 0;
+  background: var(--panel);
+  color: var(--text);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  width: 100%;
+  max-width: 480px;
+  overflow: hidden;
+}
+.modal::backdrop {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+}
+[data-theme="dark"] .modal {
+  background: var(--panel2);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+
+.modalHeader {
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--border);
+}
+.modalHeader h3 { margin: 0; font-size: 18px; font-weight: 800; }
+
+.modalBody { padding: 22px; display: flex; flex-direction: column; gap: 18px; }
+
+.formGroup { display: flex; flex-direction: column; gap: 8px; }
+.formGroup label { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; }
+.formGroup input, .formGroup select, .formGroup textarea {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+}
+.formGroup input:focus, .formGroup select:focus, .formGroup textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent2);
+}
+
+.formRow { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+.modalFooter {
+  padding: 18px 22px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  background: var(--panel2);
+}
 
 @media (max-width: 980px) {
   .board { grid-template-columns: 1fr; }
