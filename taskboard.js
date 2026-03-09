@@ -15,6 +15,7 @@ const UI = {
   board: document.getElementById("board"),
   tplColumn: document.getElementById("tplColumn"),
   tplCard: document.getElementById("tplCard"),
+  filterGroup: document.getElementById("filterGroup"),
   // Dialog elements
   dlgTask: document.getElementById("dlgTask"),
   frmTask: document.getElementById("frmTask"),
@@ -69,6 +70,7 @@ let taskboardDirHandle = null;
 let boardConfig = null;
 let tasks = []; // array of task objects
 let currentEditingTaskId = null; // tracking for dialog
+let currentPriorityFilter = "all";
 
 // ----------------------- Utilities -----------------------
 
@@ -110,6 +112,7 @@ function toNdjson(lines) {
 function sortTasksInColumn(columnId) {
   return tasks
     .filter((t) => t.column === columnId)
+    .filter((t) => currentPriorityFilter === "all" || (t.priority || "P2") === currentPriorityFilter)
     .sort((a, b) => (a.order ?? 0) - (b.order ?? 0) || String(b.updated_at).localeCompare(String(a.updated_at)));
 }
 
@@ -604,6 +607,19 @@ function setTheme(theme) {
 
 UI.btnTheme.addEventListener("click", () => {
   setTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark");
+});
+
+UI.filterGroup.addEventListener("click", (e) => {
+  const btn = e.target.closest(".filterBtn");
+  if (!btn) return;
+
+  currentPriorityFilter = btn.dataset.filter;
+  
+  // UI update
+  UI.filterGroup.querySelectorAll(".filterBtn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+
+  renderBoard();
 });
 
 initTheme();
