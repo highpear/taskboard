@@ -23,6 +23,7 @@ const UI = {
   taskTitle: document.getElementById("taskTitle"),
   taskPriority: document.getElementById("taskPriority"),
   taskColumn: document.getElementById("taskColumn"),
+  taskDueDate: document.getElementById("taskDueDate"),
   taskDescription: document.getElementById("taskDescription"),
   btnCancelTask: document.getElementById("btnCancelTask"),
 };
@@ -110,10 +111,26 @@ function toNdjson(lines) {
 }
 
 function sortTasksInColumn(columnId) {
+  const priorityMap = { P1: 1, P2: 2, P3: 3 };
   return tasks
     .filter((t) => t.column === columnId)
     .filter((t) => currentPriorityFilter === "all" || (t.priority || "P2") === currentPriorityFilter)
-    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0) || String(b.updated_at).localeCompare(String(a.updated_at)));
+    .sort((a, b) => {
+      // 1. Priority
+      const pa = priorityMap[a.priority || "P2"] || 2;
+      const pb = priorityMap[b.priority || "P2"] || 2;
+      if (pa !== pb) return pa - pb;
+
+      // 2. Due Date (earlier first)
+      if (a.due_date || b.due_date) {
+        if (!a.due_date) return 1;
+        if (!b.due_date) return -1;
+        if (a.due_date !== b.due_date) return a.due_date.localeCompare(b.due_date);
+      }
+
+      // 3. Order & Updated At
+      return (a.order ?? 0) - (b.order ?? 0) || String(b.updated_at).localeCompare(String(a.updated_at));
+    });
 }
 
 function normalizeOrders(columnId) {
@@ -342,6 +359,19 @@ function renderCard(task) {
   prio.textContent = prioVal;
   prio.className = `priorityBadge ${prioVal.toLowerCase()}`;
 
+  const due = node.querySelector(".dueDate");
+  if (task.due_date) {
+    due.textContent = task.due_date;
+    const today = new Date().toISOString().split("T")[0];
+    if (task.due_date < today) {
+      due.classList.add("overdue");
+    } else if (task.due_date === today) {
+      due.classList.add("today");
+    }
+  } else {
+    due.style.display = "none";
+  }
+
   const { done, total } = checklistProgress(task);
   node.querySelector(".pill").textContent = total ? `${done}/${total}` : "no checks";
 
@@ -469,11 +499,13 @@ async function openTaskDialog(taskId = null) {
     UI.taskTitle.value = t.title;
     UI.taskPriority.value = t.priority || "P2";
     UI.taskColumn.value = t.column || "todo";
+    UI.taskDueDate.value = t.due_date || "";
     UI.taskDescription.value = t.description || "";
   } else {
     UI.dlgTitle.textContent = "New Task";
     UI.taskPriority.value = "P2";
     UI.taskColumn.value = "todo";
+    UI.taskDueDate.value = "";
   }
 
   UI.dlgTask.showModal();
@@ -484,6 +516,7 @@ UI.frmTask.addEventListener("submit", async (e) => {
   const title = UI.taskTitle.value.trim();
   const priority = UI.taskPriority.value;
   const column = UI.taskColumn.value;
+  const due_date = UI.taskDueDate.value;
   const description = UI.taskDescription.value.trim();
 
   if (currentEditingTaskId) {
@@ -493,9 +526,10 @@ UI.frmTask.addEventListener("submit", async (e) => {
       t.title = title;
       t.priority = priority;
       t.column = column;
+      t.due_date = due_date;
       t.description = description;
       t.updated_at = nowIsoLocal();
-      await appendEvent({ type: "task_updated", task_id: t.id, changes: { title, priority, column, description } });
+      await appendEvent({ type: "task_updated", task_id: t.id, changes: { title, priority, column, due_date, description } });
     }
   } else {
     const t = {
@@ -503,6 +537,7 @@ UI.frmTask.addEventListener("submit", async (e) => {
       title,
       priority,
       column,
+      due_date,
       description,
       order: 0,
       checklist: [],
